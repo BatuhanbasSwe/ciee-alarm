@@ -89,6 +89,42 @@ def profile_url(host_id: str) -> str:
     return f"{BASE}/participant/{PARTICIPANT_ID}/host-profile/{host_id}"
 
 
+# ---------------- profilden kesin bilgileri çekme ----------------
+
+KEY_LINE_RE = re.compile(
+    r"hour|wage|overtime|tip|gratuit|rent|housing|deposit|utilit|\$", re.I
+)
+
+
+def key_facts(profile_text: str) -> list[str]:
+    """Profildeki saat/ücret/konaklama satırlarını aynen çıkarır.
+    Etiket ile değer ayrı satırdaysa ("Weekly Average Minimum Hours:" / "32") birleştirir."""
+    lines = [l.strip() for l in profile_text.splitlines() if l.strip()]
+    facts = []
+    for i, line in enumerate(lines):
+        if len(line) > 160 or not KEY_LINE_RE.search(line):
+            continue
+        if line.endswith(":") and i + 1 < len(lines):
+            line = f"{line} {lines[i + 1]}"
+        if line not in facts:
+            facts.append(line)
+    return facts[:40]
+
+
+def weekly_numbers(profile_text: str) -> str:
+    """'Weekly Average Minimum Hours' ve 'Weekly Estimated Wage' alanlarını
+    Claude'a bırakmadan, doğrudan profilden okur (birden fazla pozisyon olabilir)."""
+    flat = re.sub(r"\s+", " ", profile_text)
+    hours = re.findall(r"Weekly Average Minimum Hours:?\s*([\d.,]+)", flat, re.I)
+    wages = re.findall(r"Weekly Estimated Wage:?\s*\$?\s*([\d.,]+)", flat, re.I)
+    parts = []
+    for i in range(max(len(hours), len(wages))):
+        h = f"min {hours[i]} saat/hafta" if i < len(hours) else ""
+        w = f"tahmini ${wages[i]}/hafta" if i < len(wages) else ""
+        parts.append(", ".join(p for p in (h, w) if p))
+    return " | ".join(parts)
+
+
 # ---------------- Claude puanlaması ----------------
 
 def score_with_claude(profile_text: str) -> dict | None:
@@ -98,6 +134,7 @@ def score_with_claude(profile_text: str) -> dict | None:
         return None
 
     criteria = CRITERIA_FILE.read_text(encoding="utf-8") if CRITERIA_FILE.exists() else ""
+    facts = "\n".join(key_facts(profile_text)) or "(bulunamadı)"
     prompt = f"""Aşağıda CIEE Work and Travel programından bir işveren (host) profili var.
 Bu işi aşağıdaki kriterlerime göre değerlendir.
 
@@ -105,8 +142,15 @@ Bu işi aşağıdaki kriterlerime göre değerlendir.
 {criteria}
 </kriterler>
 
+<profilden_kesin_bilgiler>
+Bu satırlar profilden aynen alındı; saat, ücret ve konaklama için önce bunlara bak.
+"Weekly Average Minimum Hours" = haftalık çalışma saati (en az),
+"Weekly Estimated Wage" = haftalık tahmini kazanç.
+{facts}
+</profilden_kesin_bilgiler>
+
 <host_profili>
-{profile_text[:12000]}
+{profile_text[:40000]}
 </host_profili>
 
 Sadece şu JSON formatında, Türkçe cevap ver (başka hiçbir şey yazma):
@@ -121,6 +165,7 @@ Sadece şu JSON formatında, Türkçe cevap ver (başka hiçbir şey yazma):
   "cons": ["en fazla 3 kısa eksi"]
 }}
 Maaş, saat ve konaklama için sadece profildeki bilgiyi kullan; yoksa "belirtilmemiş" yaz, uydurma.
+Profilde haftalık saat ya da haftalık tahmini kazanç yazıyorsa "hours" alanına mutlaka onu yaz.
 "area" için profildeki bilgiyle birlikte o kasaba/bölge hakkındaki genel bilgini de kullanabilirsin:
 ne kadar kalabalık/turistik olduğu, yaz sezonunda nasıl olduğu, en yakın büyük şehre uzaklığı,
 ikinci iş ve sosyal hayat açısından nasıl olduğu. Emin olmadığın şeyi kesin gibi yazma."""
@@ -149,11 +194,13 @@ ikinci iş ve sosyal hayat açısından nasıl olduğu. Emin olmadığın şeyi 
         return None
 
 
-def format_message(host_id: str, host: dict, review: dict | None) -> str:
+def format_message(host_id: str, host: dict, review: dict | None, numbers: str = "") -> str:
     head = (
         f"🆕 <b>Yeni host!</b>\n"
         f'<b><a href="{profile_url(host_id)}">{esc(host["name"])}</a></b>\n📍 {esc(host["location"])}\n'
     )
+    if numbers:
+        head += f"📊 <b>Profilde:</b> {esc(numbers)}\n"
     link = f'\n🔗 {profile_url(host_id)}'
     if not review:
         return head + link
@@ -318,8 +365,11 @@ def main() -> None:
         state["initialized"] = True
     else:
         for hid in new_ids:
-            review = score_with_claude(profiles[hid]) if hid in profiles else None
-            telegram(format_message(hid, hosts[hid], review), button_url=profile_url(hid))
+            text = profiles.get(hid, "")
+            numbers = weekly_numbers(text)
+            print(f"[{hid}] profil {len(text)} karakter | {numbers or 'haftalık saat/kazanç bulunamadı'}")
+            review = score_with_claude(text) if text else None
+            telegram(format_message(hid, hosts[hid], review, numbers), button_url=profile_url(hid))
 
     state["hosts"] = {
         hid: {**v, "first_seen": previous.get(hid, {}).get("first_seen", now_iso())}
