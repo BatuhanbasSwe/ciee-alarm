@@ -47,15 +47,20 @@ def esc(s: str) -> str:
     return str(s).replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;")
 
 
-def telegram(text: str) -> None:
+def telegram(text: str, button_url: str | None = None) -> None:
+    payload = {
+        "chat_id": env("TELEGRAM_CHAT_ID"),
+        "text": text[:4000],
+        "parse_mode": "HTML",
+        "disable_web_page_preview": True,
+    }
+    if button_url:
+        payload["reply_markup"] = {
+            "inline_keyboard": [[{"text": "🔗 İlanı aç", "url": button_url}]]
+        }
     r = requests.post(
         f"https://api.telegram.org/bot{env('TELEGRAM_BOT_TOKEN')}/sendMessage",
-        json={
-            "chat_id": env("TELEGRAM_CHAT_ID"),
-            "text": text[:4000],
-            "parse_mode": "HTML",
-            "disable_web_page_preview": True,
-        },
+        json=payload,
         timeout=20,
     )
     if not r.ok:
@@ -107,12 +112,17 @@ Sadece şu JSON formatında, Türkçe cevap ver (başka hiçbir şey yazma):
 {{
   "score": 1-10 arası tam sayı,
   "wage": "maaş özeti, örn. $12/saat + bahşiş",
+  "hours": "haftalık çalışma saati ve overtime bilgisi, örn. 40+ saat/hafta, overtime var",
   "housing": "konaklama özeti, örn. $98/hafta, işe yürüme mesafesi",
+  "area": "bölgenin nasıl bir yer olduğunu anlatan 2-3 cümle",
   "summary": "tek cümlelik genel değerlendirme",
   "pros": ["en fazla 3 kısa artı"],
   "cons": ["en fazla 3 kısa eksi"]
 }}
-Profilde olmayan bilgiyi uydurma; yoksa "belirtilmemiş" yaz."""
+Maaş, saat ve konaklama için sadece profildeki bilgiyi kullan; yoksa "belirtilmemiş" yaz, uydurma.
+"area" için profildeki bilgiyle birlikte o kasaba/bölge hakkındaki genel bilgini de kullanabilirsin:
+ne kadar kalabalık/turistik olduğu, yaz sezonunda nasıl olduğu, en yakın büyük şehre uzaklığı,
+ikinci iş ve sosyal hayat açısından nasıl olduğu. Emin olmadığın şeyi kesin gibi yazma."""
 
     try:
         r = requests.post(
@@ -124,7 +134,7 @@ Profilde olmayan bilgiyi uydurma; yoksa "belirtilmemiş" yaz."""
             },
             json={
                 "model": CLAUDE_MODEL,
-                "max_tokens": 600,
+                "max_tokens": 1000,
                 "messages": [{"role": "user", "content": prompt}],
             },
             timeout=60,
@@ -141,9 +151,9 @@ Profilde olmayan bilgiyi uydurma; yoksa "belirtilmemiş" yaz."""
 def format_message(host_id: str, host: dict, review: dict | None) -> str:
     head = (
         f"🆕 <b>Yeni host!</b>\n"
-        f"<b>{esc(host['name'])}</b>\n📍 {esc(host['location'])}\n"
+        f'<b><a href="{profile_url(host_id)}">{esc(host["name"])}</a></b>\n📍 {esc(host["location"])}\n'
     )
-    link = f'\n<a href="{profile_url(host_id)}">Profili aç</a>'
+    link = f'\n🔗 {profile_url(host_id)}'
     if not review:
         return head + link
 
@@ -156,7 +166,9 @@ def format_message(host_id: str, host: dict, review: dict | None) -> str:
         head,
         f"{badge} <b>Puan: {score}/10</b>",
         f"💵 {esc(review.get('wage', '-'))}",
+        f"⏱️ {esc(review.get('hours', '-'))}",
         f"🏠 {esc(review.get('housing', '-'))}",
+        f"\n🗺️ {esc(review.get('area', ''))}",
         f"\n{esc(review.get('summary', ''))}",
     ]
     for p in (review.get("pros") or [])[:3]:
@@ -301,7 +313,7 @@ def main() -> None:
     else:
         for hid in new_ids:
             review = score_with_claude(profiles[hid]) if hid in profiles else None
-            telegram(format_message(hid, hosts[hid], review))
+            telegram(format_message(hid, hosts[hid], review), button_url=profile_url(hid))
 
     state["hosts"] = {
         hid: {**v, "first_seen": previous.get(hid, {}).get("first_seen", now_iso())}
