@@ -150,7 +150,7 @@ Bu satırlar profilden aynen alındı; saat, ücret ve konaklama için önce bun
 </profilden_kesin_bilgiler>
 
 <host_profili>
-{profile_text[:40000]}
+{profile_text[:20000]}
 </host_profili>
 
 Sadece şu JSON formatında, Türkçe cevap ver (başka hiçbir şey yazma):
@@ -170,28 +170,50 @@ Profilde haftalık saat ya da haftalık tahmini kazanç yazıyorsa "hours" alan�
 ne kadar kalabalık/turistik olduğu, yaz sezonunda nasıl olduğu, en yakın büyük şehre uzaklığı,
 ikinci iş ve sosyal hayat açısından nasıl olduğu. Emin olmadığın şeyi kesin gibi yazma."""
 
-    try:
-        r = requests.post(
-            "https://api.anthropic.com/v1/messages",
-            headers={
-                "x-api-key": api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            },
-            json={
-                "model": CLAUDE_MODEL,
-                "max_tokens": 1000,
-                "messages": [{"role": "user", "content": prompt}],
-            },
-            timeout=60,
-        )
-        r.raise_for_status()
-        text = "".join(b.get("text", "") for b in r.json().get("content", []))
-        match = re.search(r"\{.*\}", text, re.S)
-        return json.loads(match.group(0)) if match else None
-    except Exception as e:
-        print("Claude puanlama hatası:", e)
-        return None
+    global LAST_CLAUDE_ERROR
+    LAST_CLAUDE_ERROR = ""
+    for attempt in range(4):
+        try:
+            r = requests.post(
+                "https://api.anthropic.com/v1/messages",
+                headers={
+                    "x-api-key": api_key,
+                    "anthropic-version": "2023-06-01",
+                    "content-type": "application/json",
+                },
+                json={
+                    "model": CLAUDE_MODEL,
+                    "max_tokens": 3000,
+                    "messages": [{"role": "user", "content": prompt}],
+                },
+                timeout=120,
+            )
+            # Dakikalık token sınırı (429) ya da geçici yoğunluk (529/5xx): bekle, tekrar dene
+            if r.status_code in (429, 500, 502, 503, 529) and attempt < 3:
+                wait = int(r.headers.get("retry-after", "0") or 0) or 30 * (attempt + 1)
+                print(f"Claude {r.status_code}, {wait} sn bekleniyor...")
+                time.sleep(min(wait, 90))
+                continue
+            if not r.ok:
+                LAST_CLAUDE_ERROR = f"API {r.status_code}: {r.text[:200]}"
+                break
+            data = r.json()
+            text = "".join(b.get("text", "") for b in data.get("content", []))
+            match = re.search(r"\{.*\}", text, re.S)
+            if not match:
+                LAST_CLAUDE_ERROR = f"cevapta JSON yok (stop_reason={data.get('stop_reason')})"
+                break
+            return json.loads(match.group(0))
+        except Exception as e:
+            LAST_CLAUDE_ERROR = f"{type(e).__name__}: {str(e)[:200]}"
+            if attempt < 3:
+                time.sleep(10)
+                continue
+    print("Claude puanlama hatası:", LAST_CLAUDE_ERROR)
+    return None
+
+
+LAST_CLAUDE_ERROR = ""
 
 
 def format_message(host_id: str, host: dict, review: dict | None, numbers: str = "") -> str:
@@ -203,6 +225,8 @@ def format_message(host_id: str, host: dict, review: dict | None, numbers: str =
         head += f"📊 <b>Profilde:</b> {esc(numbers)}\n"
     link = f'\n🔗 {profile_url(host_id)}'
     if not review:
+        if LAST_CLAUDE_ERROR:
+            head += f"\n⚠️ Claude puanlayamadı: {esc(LAST_CLAUDE_ERROR)}\n"
         return head + link
 
     try:
@@ -434,6 +458,8 @@ def main() -> None:
             text = profiles.get(hid, "")
             numbers = weekly_numbers(text)
             print(f"[{hid}] profil {len(text)} karakter | {numbers or 'haftalık saat/kazanç bulunamadı'}")
+            global LAST_CLAUDE_ERROR
+            LAST_CLAUDE_ERROR = "" if text else "profil sayfası okunamadı"
             review = score_with_claude(text) if text else None
             telegram(format_message(hid, hosts[hid], review, numbers), button_url=profile_url(hid))
 
