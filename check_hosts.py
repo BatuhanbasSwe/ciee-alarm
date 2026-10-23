@@ -237,6 +237,68 @@ def click_if_present(page, selector: str) -> None:
         pass
 
 
+# Profil sayfasında her pozisyon ("Sales Associate ... $15/hour") kapalı bir panel.
+# Saat, haftalık kazanç, bahşiş ve iş tanımı panel açılmadan görünmüyor;
+# görünmeyen metin inner_text() ile okunamadığı için panelleri açıyoruz.
+WAGE_HEADER_RE = re.compile(r"\$\s?\d[\d.,]*\s*/\s*h(ou)?r", re.I)
+
+VISIBLE_HOURS_JS = """() => {
+  let n = 0;
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  while (w.nextNode()) {
+    const t = w.currentNode;
+    if (/Weekly Average Minimum Hours/i.test(t.nodeValue) &&
+        t.parentElement && t.parentElement.getClientRects().length) n++;
+  }
+  return n;
+}"""
+
+HIDDEN_FIELDS_JS = """() => {
+  const out = [];
+  const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  while (w.nextNode()) {
+    const t = w.currentNode;
+    if (!/Weekly Average Minimum Hours|Weekly Estimated Wage|^\\s*Tips?\\s*:/i.test(t.nodeValue)) continue;
+    let el = t.parentElement;
+    // Değer ayrı bir etikette olabilir ("Hours: <b>37</b>"): rakam görene kadar bir üst öğeye çık
+    for (let i = 0; i < 3 && el && !/:\\s*\\S/.test(el.textContent); i++) el = el.parentElement;
+    if (el) out.push(el.textContent.replace(/\\s+/g, " ").trim().slice(0, 400));
+  }
+  return [...new Set(out)];
+}"""
+
+
+def expand_job_panels(page) -> None:
+    """Pozisyon panellerini açar. Zaten açık bir paneli kapattıysak geri açar."""
+    try:
+        headers = page.get_by_text(WAGE_HEADER_RE).element_handles()[:10]
+    except Exception as e:
+        print("Pozisyon başlıkları bulunamadı:", e)
+        return
+    for h in headers:
+        try:
+            if not h.is_visible():
+                continue
+            before = page.evaluate(VISIBLE_HOURS_JS)
+            h.click(timeout=3000)
+            page.wait_for_timeout(700)
+            if page.evaluate(VISIBLE_HOURS_JS) < before:
+                h.click(timeout=3000)
+                page.wait_for_timeout(700)
+        except Exception as e:
+            print("Pozisyon paneli açılamadı:", e)
+    print(f"  {len(headers)} pozisyon başlığı, {page.evaluate(VISIBLE_HOURS_JS)} görünür saat alanı")
+
+
+def hidden_job_fields(page) -> list[str]:
+    """Panel açılamasa bile DOM'da duran saat/kazanç/bahşiş alanlarını okur."""
+    try:
+        return page.evaluate(HIDDEN_FIELDS_JS)
+    except Exception as e:
+        print("Pozisyon alanları okunamadı:", e)
+        return []
+
+
 def scrape(known_ids: set, fetch_profiles: bool = True) -> tuple[dict, dict]:
     """
     (hosts, profiles) döndürür.
@@ -315,9 +377,13 @@ def scrape(known_ids: set, fetch_profiles: bool = True) -> tuple[dict, dict]:
             try:
                 page.goto(profile_url(hid), wait_until="networkidle", timeout=45000)
                 page.wait_for_selector("text=AVAILABLE JOB INFORMATION", timeout=15000)
+                expand_job_panels(page)
                 text = page.inner_text("body")
                 # Sayfanın alt bilgisini at
                 text = text.split("CONTACT CIEE")[0]
+                hidden = hidden_job_fields(page)
+                if hidden:
+                    text += "\n\nPozisyon alanları:\n" + "\n".join(hidden)
                 profiles[hid] = re.sub(r"\n{3,}", "\n\n", text).strip()
             except Exception as e:
                 print(f"Profil okunamadı ({hid}):", e)

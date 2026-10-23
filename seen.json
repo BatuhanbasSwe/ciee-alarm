@@ -5,35 +5,15 @@
       "location": "Gallatin Gateway, Montana",
       "name": "320 GUEST RANCH"
     },
-    "34232": {
-      "first_seen": "2026-10-23T16:02:07+00:00",
-      "location": "Bandon, Oregon",
-      "name": "BANDON DUNES GOLF RESORT"
-    },
     "34284": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Scottsdale, Arizona",
       "name": "BEACH BAGS ANCHOR SYSTEM"
     },
-    "34793": {
-      "first_seen": "2026-10-23T15:00:31+00:00",
-      "location": "Kill Devil Hills, North Carolina",
-      "name": "DAIRY QUEEN KILL DEVIL HILLS"
-    },
-    "35951": {
-      "first_seen": "2026-10-23T17:16:25+00:00",
-      "location": "Lincoln, New Hampshire",
-      "name": "LAHOUTS 127 MAIN STREET"
-    },
     "36344": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Big Sky, Montana",
       "name": "MOONLIGHT BASIN"
-    },
-    "36496": {
-      "first_seen": "2026-10-23T15:00:31+00:00",
-      "location": "Geneva-on-the-Lake, Ohio",
-      "name": "OLD FIREHOUSE WINERY"
     },
     "36611": {
       "first_seen": "2026-10-23T12:59:20+00:00",
@@ -49,11 +29,6 @@
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Seeley Lake, Montana",
       "name": "THE ICE CREAM PLACE"
-    },
-    "40670": {
-      "first_seen": "2026-10-23T17:16:25+00:00",
-      "location": "Skagway, Alaska",
-      "name": "KLONDIKE GOLD RUSH JEWELS"
     }
   },
   "initialized": true,
