@@ -2,7 +2,9 @@ name: CIEE host kontrolü
 
 on:
   schedule:
-    - cron: "*/15 * * * *"   # her 15 dakikada bir (GitHub birkaç dakika gecikebilir)
+    # Her 15 dakikada bir. Saat başı (:00) GitHub'ın en yoğun anı olduğu için
+    # dakikalar kaydırıldı; o anlarda zamanlanmış işler gecikiyor ya da atlanıyor.
+    - cron: "7,22,37,52 * * * *"
   workflow_dispatch:          # Actions sekmesinden elle çalıştırmak için
 
 permissions:
