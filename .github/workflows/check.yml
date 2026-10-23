@@ -1,0 +1,48 @@
+name: CIEE host kontrolü
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # her 15 dakikada bir (GitHub birkaç dakika gecikebilir)
+  workflow_dispatch:          # Actions sekmesinden elle çalıştırmak için
+
+permissions:
+  contents: write             # seen.json dosyasını repoya kaydedebilmek için
+
+concurrency:
+  group: ciee-check
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Paketleri kur
+        run: |
+          pip install -r requirements.txt
+          python -m playwright install --with-deps chromium
+
+      - name: Kontrol et
+        env:
+          CIEE_EMAIL: ${{ secrets.CIEE_EMAIL }}
+          CIEE_PASSWORD: ${{ secrets.CIEE_PASSWORD }}
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+          CIEE_PARTICIPANT_ID: ${{ secrets.CIEE_PARTICIPANT_ID }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python check_hosts.py
+
+      - name: Görülen listeyi kaydet
+        if: always()
+        run: |
+          git config user.name "ciee-bot"
+          git config user.email "ciee-bot@users.noreply.github.com"
+          git add seen.json || true
+          git diff --cached --quiet || (git commit -m "seen.json güncellendi" && git push)
