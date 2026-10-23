@@ -32,6 +32,7 @@ CRITERIA_FILE = HERE / "kriterler.txt"
 CLAUDE_MODEL = "claude-sonnet-5-5"
 MAX_PROFILES_PER_RUN = 15          # bir seferde en fazla bu kadar yeni profil aç
 ERROR_NOTIFY_EVERY_HOURS = 6       # hata bildirimi en fazla bu sıklıkta
+HEARTBEAT_UTC_HOUR = 7             # günlük "çalışıyorum" mesajı (07:00 UTC = 10:00 Türkiye)
 
 
 # ---------------- yardımcılar ----------------
@@ -324,6 +325,19 @@ def main() -> None:
         hid: {**v, "first_seen": previous.get(hid, {}).get("first_seen", now_iso())}
         for hid, v in hosts.items()
     }
+
+    # Günlük "hayattayım" mesajı: her gün Türkiye saatiyle 10:00'dan sonraki ilk çalıştırmada.
+    # Bu mesaj gelmezse sistem bir yerde durmuş demektir.
+    now = datetime.now(timezone.utc)
+    today = now.date().isoformat()
+    if now.hour >= HEARTBEAT_UTC_HOUR and state.get("last_heartbeat") != today and not first_run:
+        telegram(
+            f"🟢 Sistem çalışıyor. Şu an {len(hosts)} host var, "
+            f"15 dakikada bir kontrol ediliyor.\n"
+            f"Bu mesaj her sabah gelir; gelmediği gün bir sorun var demektir."
+        )
+        state["last_heartbeat"] = today
+
     save_state(state)
 
 
