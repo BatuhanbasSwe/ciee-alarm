@@ -29,7 +29,7 @@ HERE = Path(__file__).parent
 STATE_FILE = HERE / "seen.json"
 CRITERIA_FILE = HERE / "kriterler.txt"
 
-CLAUDE_MODEL = "claude-haiku-5-5"
+CLAUDE_MODEL = "claude-sonnet-5-5"
 MAX_PROFILES_PER_RUN = 15          # bir seferde en fazla bu kadar yeni profil aç
 ERROR_NOTIFY_EVERY_HOURS = 6       # hata bildirimi en fazla bu sıklıkta
 
