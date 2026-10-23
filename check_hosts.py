@@ -200,7 +200,12 @@ def scrape(known_ids: set, fetch_profiles: bool = True) -> tuple[dict, dict]:
     env("CIEE_PARTICIPANT_ID")
 
     with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True)
+        # GitHub sunucularında Google Chrome hazır kurulu; onu kullan (indirme gerekmez).
+        # Bulunamazsa Playwright'ın kendi Chromium'una düş.
+        try:
+            browser = p.chromium.launch(headless=True, channel="chrome")
+        except Exception:
+            browser = p.chromium.launch(headless=True)
         page = browser.new_page(viewport={"width": 1280, "height": 900})
 
         # 1) Giriş
