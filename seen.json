@@ -1,0 +1,41 @@
+{
+  "hosts": {
+    "33939": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Gallatin Gateway, Montana",
+      "name": "320 GUEST RANCH"
+    },
+    "34284": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Scottsdale, Arizona",
+      "name": "BEACH BAGS ANCHOR SYSTEM"
+    },
+    "36344": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Big Sky, Montana",
+      "name": "MOONLIGHT BASIN"
+    },
+    "36436": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Columbia Falls, Montana",
+      "name": "NORTH FORTY RESORT"
+    },
+    "36611": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Ocean City, Maryland",
+      "name": "PIEZANOS PIZZA NORTH"
+    },
+    "37670": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Gardiner, Montana",
+      "name": "THE CORRAL"
+    },
+    "37737": {
+      "first_seen": "2026-10-23T12:59:20+00:00",
+      "location": "Seeley Lake, Montana",
+      "name": "THE ICE CREAM PLACE"
+    }
+  },
+  "initialized": true,
+  "last_error_notified": null
+}
