@@ -5,11 +5,6 @@
       "location": "Gallatin Gateway, Montana",
       "name": "320 GUEST RANCH"
     },
-    "34002": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Juneau, Alaska",
-      "name": "ALASKAN HOTEL AND BAR"
-    },
     "34284": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Scottsdale, Arizona",
@@ -19,16 +14,6 @@
       "first_seen": "2026-10-23T18:51:18+00:00",
       "location": "Kill Devil Hills, North Carolina",
       "name": "DAIRY QUEEN KILL DEVIL HILLS"
-    },
-    "36344": {
-      "first_seen": "2026-10-27T05:31:21+00:00",
-      "location": "Big Sky, Montana",
-      "name": "MOONLIGHT BASIN"
-    },
-    "36436": {
-      "first_seen": "2026-10-26T19:01:35+00:00",
-      "location": "Columbia Falls, Montana",
-      "name": "NORTH FORTY RESORT"
     },
     "36630": {
       "first_seen": "2026-10-27T14:35:07+00:00",
@@ -40,88 +25,28 @@
       "location": "Black Mountain, North Carolina",
       "name": "RIDGECREST CONFERENCE CENTER"
     },
-    "37190": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Park City, Utah",
-      "name": "SHERATON PARK CITY"
-    },
-    "37357": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Newport, Rhode Island",
-      "name": "STONEACRE BRASSERIE"
-    },
     "37358": {
       "first_seen": "2026-10-27T14:35:07+00:00",
       "location": "Newport, Rhode Island",
       "name": "STONEACRE CHINESE TEA HOUSE"
-    },
-    "37359": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Newport, Rhode Island",
-      "name": "STONEACRE GARDEN"
-    },
-    "37360": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Newport, Rhode Island",
-      "name": "STONEACRE THE ELMS MANSION CAFE"
     },
     "37737": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Seeley Lake, Montana",
       "name": "THE ICE CREAM PLACE"
     },
-    "38065": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Park City, Utah",
-      "name": "WALDORF ASTORIA PARK CITY"
+    "40856": {
+      "first_seen": "2026-10-28T17:16:04+00:00",
+      "location": "Estes Park, Colorado",
+      "name": "YMCA OF THE ROCKIES - ESTES PARK CENTER"
     },
     "40857": {
       "first_seen": "2026-10-26T17:31:29+00:00",
       "location": "Granby, Colorado",
       "name": "SNOW MOUNTAIN RANCH"
-    },
-    "40940": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE SAND DUNES POOL"
-    },
-    "40941": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "N Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE SAND DUNES WATER PARK"
-    },
-    "40947": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE WYNDHAM UPPER POOL"
-    },
-    "40948": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE BEACH SOUTH"
-    },
-    "40949": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE BEACH NORTH"
-    },
-    "41019": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "North Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE WYNDHAM LAZY RIVER"
-    },
-    "41045": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Myrtle Beach, South Carolina",
-      "name": "RICCIARDIS ITALIAN ICE MAIN OFFICE OF RICCIARDI’S"
-    },
-    "41176": {
-      "first_seen": "2026-10-27T14:35:07+00:00",
-      "location": "Healy, Alaska",
-      "name": "AURORA DENALI LODGE"
     }
   },
   "initialized": true,
-  "last_error_notified": "2026-10-28T15:16:26+00:00",
-  "last_heartbeat": "2026-10-27"
+  "last_error_notified": null,
+  "last_heartbeat": "2026-10-28"
 }
