@@ -10,6 +10,11 @@
       "location": "Scottsdale, Arizona",
       "name": "BEACH BAGS ANCHOR SYSTEM"
     },
+    "34427": {
+      "first_seen": "2026-10-29T23:01:53+00:00",
+      "location": "Medora, North Dakota",
+      "name": "BOOTS BAR AND GRILL"
+    },
     "36156": {
       "first_seen": "2026-10-29T18:01:32+00:00",
       "location": "Egg Harbor, Wisconsin",
@@ -54,9 +59,14 @@
       "first_seen": "2026-10-26T17:31:29+00:00",
       "location": "Granby, Colorado",
       "name": "SNOW MOUNTAIN RANCH"
+    },
+    "41176": {
+      "first_seen": "2026-10-29T23:01:53+00:00",
+      "location": "Healy, Alaska",
+      "name": "AURORA DENALI LODGE"
     }
   },
   "initialized": true,
-  "last_error_notified": "2026-10-29T19:31:22+00:00",
+  "last_error_notified": null,
   "last_heartbeat": "2026-10-29"
 }
