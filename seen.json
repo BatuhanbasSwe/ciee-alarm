@@ -25,6 +25,11 @@
       "location": "Black Mountain, North Carolina",
       "name": "RIDGECREST CONFERENCE CENTER"
     },
+    "37190": {
+      "first_seen": "2026-10-29T03:31:25+00:00",
+      "location": "Park City, Utah",
+      "name": "SHERATON PARK CITY"
+    },
     "37737": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Seeley Lake, Montana",
@@ -39,6 +44,11 @@
       "first_seen": "2026-10-26T17:31:29+00:00",
       "location": "Granby, Colorado",
       "name": "SNOW MOUNTAIN RANCH"
+    },
+    "41176": {
+      "first_seen": "2026-10-29T03:31:25+00:00",
+      "location": "Healy, Alaska",
+      "name": "AURORA DENALI LODGE"
     }
   },
   "initialized": true,
