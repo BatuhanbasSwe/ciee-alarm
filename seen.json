@@ -15,11 +15,6 @@
       "location": "Medora, North Dakota",
       "name": "BOOTS BAR AND GRILL"
     },
-    "36156": {
-      "first_seen": "2026-10-29T18:01:32+00:00",
-      "location": "Egg Harbor, Wisconsin",
-      "name": "MAIN STREET MARKET"
-    },
     "36436": {
       "first_seen": "2026-10-30T04:16:19+00:00",
       "location": "Columbia Falls, Montana",
@@ -44,6 +39,11 @@
       "first_seen": "2026-10-29T15:01:30+00:00",
       "location": "Kitty Hawk, North Carolina",
       "name": "SOUTHERN SHORES FOOD COMPANY"
+    },
+    "37358": {
+      "first_seen": "2026-10-30T07:16:11+00:00",
+      "location": "Newport, Rhode Island",
+      "name": "STONEACRE CHINESE TEA HOUSE"
     },
     "37737": {
       "first_seen": "2026-10-23T12:59:20+00:00",
