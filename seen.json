@@ -15,11 +15,6 @@
       "location": "Geneva-on-the-Lake, Ohio",
       "name": "OLD FIREHOUSE WINERY"
     },
-    "36611": {
-      "first_seen": "2026-10-30T16:01:59+00:00",
-      "location": "Ocean City, Maryland",
-      "name": "PIEZANOS PIZZA NORTH"
-    },
     "36630": {
       "first_seen": "2026-10-27T14:35:07+00:00",
       "location": "Myrtle Beach, South Carolina",
@@ -30,20 +25,10 @@
       "location": "Black Mountain, North Carolina",
       "name": "RIDGECREST CONFERENCE CENTER"
     },
-    "37086": {
-      "first_seen": "2026-10-30T18:31:51+00:00",
-      "location": "Friday Harbor, Washington",
-      "name": "SAN JUAN ISLAND BREWING COMPANY"
-    },
     "37737": {
       "first_seen": "2026-10-23T12:59:20+00:00",
       "location": "Seeley Lake, Montana",
       "name": "THE ICE CREAM PLACE"
-    },
-    "38065": {
-      "first_seen": "2026-10-30T17:46:18+00:00",
-      "location": "Park City, Utah",
-      "name": "WALDORF ASTORIA PARK CITY"
     },
     "40670": {
       "first_seen": "2026-10-30T18:31:51+00:00",
@@ -54,14 +39,9 @@
       "first_seen": "2026-10-26T17:31:29+00:00",
       "location": "Granby, Colorado",
       "name": "SNOW MOUNTAIN RANCH"
-    },
-    "41176": {
-      "first_seen": "2026-10-30T06:16:04+00:00",
-      "location": "Healy, Alaska",
-      "name": "AURORA DENALI LODGE"
     }
   },
   "initialized": true,
-  "last_error_notified": "2026-10-31T13:16:23+00:00",
-  "last_heartbeat": "2026-10-30"
+  "last_error_notified": null,
+  "last_heartbeat": "2026-10-31"
 }
