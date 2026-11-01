@@ -34,6 +34,11 @@
       "first_seen": "2026-10-26T17:31:29+00:00",
       "location": "Granby, Colorado",
       "name": "SNOW MOUNTAIN RANCH"
+    },
+    "41045": {
+      "first_seen": "2026-11-01T14:59:58+00:00",
+      "location": "Myrtle Beach, South Carolina",
+      "name": "RICCIARDIS ITALIAN ICE MAIN OFFICE OF RICCIARDI’S"
     }
   },
   "initialized": true,
